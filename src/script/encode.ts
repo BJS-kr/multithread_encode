@@ -1,4 +1,4 @@
-import { FfmpegCommand } from 'fluent-ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
 import { parentPort, workerData } from 'worker_threads';
 import {
   COMMAND_ERROR,
@@ -10,6 +10,7 @@ import {
   TIMEOUT,
 } from '../lib/messages';
 import { EncodeInstruction } from '../lib/type';
+import { resolve } from 'path';
 
 process.on('SIGINT', (signal) => {
   parentPort?.postMessage(SIGINT(signal));
@@ -33,7 +34,7 @@ parentPort?.on('close', () => {
 });
 
 const {
-  inputs,
+  input,
   inputFormat,
   output,
   outputFormat,
@@ -46,8 +47,10 @@ const {
   thumbnail,
 } = workerData as EncodeInstruction;
 
-const command = new FfmpegCommand()
-  .input(inputs[Symbol.iterator]().next().value)
+console.log(workerData);
+
+const command = ffmpeg()
+  .input(resolve(input))
   .inputFormat(inputFormat)
   .output(output)
   .outputFormat(outputFormat)
@@ -58,7 +61,8 @@ const command = new FfmpegCommand()
   .duration(duration)
   .thumbnail(thumbnail)
   .on('error', (error) => {
-    parentPort?.postMessage(COMMAND_ERROR(error, output, outputFormat));
+    parentPort?.postMessage(COMMAND_ERROR(error, output));
+    process.exit(1);
   })
   .on('progress', (progress) => {
     parentPort?.postMessage(PROGRESS(progress));

@@ -2,7 +2,7 @@ import { PathLike } from 'fs';
 
 export type EncodeInstruction = {
   tag: 'ENCODE_INSTRUCTION';
-  inputs: PathLike[];
+  input: string;
   inputFormat: string;
   output: string;
   outputFormat: string;
@@ -12,5 +12,5 @@ export type EncodeInstruction = {
   autoPadEnable: boolean;
   autoPadColor: string;
   duration: number;
-  thumbnail: { filename: string; folder: string; size: string };
+  thumbnail: { filename: string; folder: string; size: string; count: number };
 };

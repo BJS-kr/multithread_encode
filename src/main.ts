@@ -10,19 +10,21 @@ function encodingServer() {
       response.writeHead(200, 'this is encoder for adaptive streaming');
       response.end('hi! This is encoding server using Multi-threads!');
     } else if (request.method === 'POST' && request.url === '/encode') {
-      let data: Buffer;
+      let data = '';
 
       request
         .on('data', (chunk) => {
           data += chunk;
         })
         .on('end', () => {
-          const encodeInstruction = JSON.parse(JSON.stringify(data));
-
+          const encodeInstruction = JSON.parse(data);
           if (isEncodeInstruction(encodeInstruction)) {
-            const worker = new Worker('./encode.ts', {
-              workerData: encodeInstruction,
-            });
+            const worker = new Worker(
+              'C:/Users/BJS/Desktop/multithread_encode/dist/script/encode.js',
+              {
+                workerData: encodeInstruction,
+              }
+            );
 
             worker
               .on('messageerror', (error) => {
@@ -32,7 +34,7 @@ function encodingServer() {
                 log('encoding started');
               })
               .on('message', (message) => {
-                if (message.type === 'process') log(message.message);
+                log(message.message);
               })
               .on('exit', () => {
                 log('Worker Process Exited');

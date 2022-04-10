@@ -12,14 +12,10 @@ export function SIGINT(signal: NodeJS.Signals) {
   };
 }
 
-export function COMMAND_ERROR(
-  error: any,
-  output: string,
-  outputFormat: string
-) {
+export function COMMAND_ERROR(error: any, output: string) {
   return {
     type: 'report',
-    message: `Error occurred during encoding: ${error}.\n expected output was: ${output}.${outputFormat}`,
+    message: `Error occurred during encoding: ${error}.\n expected output was: ${output}`,
   };
 }
 
